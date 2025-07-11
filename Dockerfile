@@ -10,7 +10,7 @@ ENV PATH="$PATH:/usr/local/go/bin"
 WORKDIR /app
 
 # needed things form apt
-RUN apt update -y && apt install -y wget git
+RUN apt update -y && apt install -y wget git ripgrep
 
 # install pip dependencies 
 COPY requirements.txt requirements.txt
@@ -38,14 +38,19 @@ RUN wget https://github.com/gitleaks/gitleaks/releases/download/v8.27.2/gitleaks
     tar -xzf gitleaks_8.27.2_linux_x64.tar.gz && \
     rm ./gitleaks_8.27.2_linux_x64.tar.gz
 
+# get kingfisher
+RUN wget https://github.com/mongodb/kingfisher/releases/download/v1.20.0/kingfisher-linux-x64.tgz && \
+    tar -xzf kingfisher-linux-x64.tgz && \
+    rm ./kingfisher-linux-x64.tgz
+
 # get git-secrets
 RUN wget https://github.com/awslabs/git-secrets/blob/master/git-secrets 
 
 # move everyting to binaries 
-RUN chmod +x trufflehog git-secrets gitleaks && \
+RUN chmod +x trufflehog git-secrets gitleaks kingfisher && \
     mv trufflehog /usr/local/go/bin && \
     mv git-secrets /usr/local/bin && \
-    mv gitleaks /usr/local/bin
+    mv gitleaks kingfisher /usr/local/bin
 
 # Copy application code
 COPY . .
